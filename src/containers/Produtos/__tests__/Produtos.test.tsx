@@ -2,7 +2,7 @@ import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 import { renderizaComProvider } from '../../../utils/tests'
 import { Produtos } from '../styles'
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 
 const mocks = [
   {
@@ -44,9 +44,15 @@ describe('Testes para o container produtos', () => {
   beforeAll(() => server.listen())
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
-
   test('Deve renderizar corretamente', () => {
     renderizaComProvider(<Produtos />)
-    expect(screen.getByText('Carregando...')).toBeInTheDocument()
+    const textoCarregando = screen.getByText('Carregando...')
+    expect(textoCarregando).toBeInTheDocument()
+  })
+  test('Deve renderizar corretamente com listagem', async () => {
+    renderizaComProvider(<Produtos />)
+    await waitFor(() => {
+      expect(screen.getByText('Hogwarts Legacy')).toBeInTheDocument()
+    })
   })
 })
